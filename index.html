@@ -5,11 +5,171 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/css/reset.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.css">
     <script src="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+
   </head>
   <body class="mixpanel-platform-body">
-    <h1>Hello, World!</h1>
     <script>
-      // Run queries and display results here
-    </script>
+    // Set a global variable for the Custom Query result
+    var cqResults = {}
+    
+    function runQueries() {
+        $('#path svg').hide()
+        
+        median = function( numArr ) {
+          numArr = numArr.filter(Number);
+          numArr.sort( function(a,b) {return a - b;} );
+          var half = Math.floor(numArr.length/2);
+          if(numArr.length % 2)
+            return numArr[half];
+          else
+            return (numArr[half-1] + numArr[half]) / 2.0;
+          }
+        
+        structureChartData = function ( results ) {
+        return {"Median project variance": Math.round( 10*median(results) )/10 || -1, 
+                "Count projects": results.filter(Number).length,
+                };
+        }  
+        
+        // grab the Custom Query script as a string
+        var scriptA = $('#cqA').html();
+        scriptA = $.trim(scriptA);
+        var scriptB = $('#cqB').html();
+        scriptB = $.trim(scriptB);
+        var scriptC = $('#cqC').html();
+        scriptC = $.trim(scriptC);
+        var scriptD = $('#cqD').html();
+        scriptD = $.trim(scriptD);
+        
+        MP.api.custom_query(scriptA).done(function(results) {
+            cqResults.A = structureChartData(results);
+        });
+
+        MP.api.custom_query(scriptB).done(function(results) {
+            cqResults.B = structureChartData(results);
+        });
+
+        MP.api.custom_query(scriptC).done(function(results) {
+            cqResults.C = structureChartData(results);
+        });
+
+        MP.api.custom_query(scriptD).done(function(results) {
+            cqResults.D = structureChartData(results);
+            
+            // compute the number of intevals (3 hours) since 3/22/16 at 4:30pm PST when metrics started to 1 decimal
+            intervals_since_start = Math.round((new Date().getTime() - 1458689450000)/1000/3600/3*10)/10
+            
+            // now that we have all the results, make the table
+            $('<div></div>').appendTo('body').MPTable({
+              firstColHeader: 'Grades from '.concat(intervals_since_start).concat(" full runs"),
+              data: cqResults,
+            })
+        });
+    }
+    
+    $(document).ready(function() {
+      runQueries()
+    });
+    
+  </script>
+    
+  <script type="text/cq" id="cqA">
+    getLift = function ( event, letter ) {
+      return event.properties["lift-".concat(letter)];
+    },
+    getALift = function (item) {
+      return getLift(item, "A");
+    };
+    function main() {
+      return Events({
+        to_date: new Date().toISOString().split("T")[0],
+        from_date: "2016-03-22", // new Date().toISOString().split("T")[0],
+    })
+    .filter(function(e) {
+      return e.name == "Baseline performance";
+    })
+    .groupBy(["properties.project-id"], mixpanel.reducer.numeric_summary(getALift))
+    .map(function(project) {
+      summary = project.value;
+      project_id = project.key[0];
+      return summary.sum_squares / (summary.count - 1);
+    });
+    }
+  </script>
+  
+  <script type="text/cq" id="cqB">
+    getLift = function ( event, letter ) {
+      return event.properties["lift-".concat(letter)];
+    },
+    getALift = function (item) {
+      return getLift(item, "B");
+    };
+    function main() {
+      return Events({
+        to_date: new Date().toISOString().split("T")[0],
+        from_date: "2016-03-22", // new Date().toISOString().split("T")[0],
+    })
+    .filter(function(e) {
+      return e.name == "Baseline performance";
+    })
+    .groupBy(["properties.project-id"], mixpanel.reducer.numeric_summary(getALift))
+    .map(function(project) {
+      summary = project.value;
+      project_id = project.key[0];
+      return summary.sum_squares / (summary.count - 1);
+    });
+    }
+  </script>
+  
+  <script type="text/cq" id="cqC">
+    getLift = function ( event, letter ) {
+      return event.properties["lift-".concat(letter)];
+    },
+    getALift = function (item) {
+      return getLift(item, "C");
+    };
+    function main() {
+      return Events({
+        to_date: new Date().toISOString().split("T")[0],
+        from_date: "2016-03-22", // new Date().toISOString().split("T")[0],
+    })
+    .filter(function(e) {
+      return e.name == "Baseline performance";
+    })
+    .groupBy(["properties.project-id"], mixpanel.reducer.numeric_summary(getALift))
+    .map(function(project) {
+      summary = project.value;
+      project_id = project.key[0];
+      return summary.sum_squares / (summary.count - 1);
+    });
+    }
+  </script>
+  
+  <script type="text/cq" id="cqD">
+    getLift = function ( event, letter ) {
+      return event.properties["lift-".concat(letter)];
+    },
+    getALift = function (item) {
+      return getLift(item, "D");
+    };
+    function main() {
+      return Events({
+        to_date: new Date().toISOString().split("T")[0],
+        from_date: "2016-03-22", // new Date().toISOString().split("T")[0],
+    })
+    .filter(function(e) {
+      return e.name == "Baseline performance";
+    })
+    .groupBy(["properties.project-id"], mixpanel.reducer.numeric_summary(getALift))
+    .map(function(project) {
+      summary = project.value;
+      project_id = project.key[0];
+      return summary.sum_squares / (summary.count - 1);
+    });
+    }
+  </script>
+  
+  
   </body>
 </html>
