@@ -87,7 +87,7 @@
         from_date: "2016-03-22", // new Date().toISOString().split("T")[0],
     })
     .filter(function(e) {
-      return e.name == "Experiment performance";
+      return e.name == "Experiment performance" " && e.properties["num-users-log10"] > 3;
     })
     .groupBy(["properties.project-id"], mixpanel.reducer.numeric_summary(getALift))
     .map(function(project) {
@@ -111,7 +111,7 @@
         from_date: "2016-03-22", // new Date().toISOString().split("T")[0],
     })
     .filter(function(e) {
-      return e.name == "Experiment performance";
+      return e.name == "Experiment performance" " && e.properties["num-users-log10"] > 3;
     })
     .groupBy(["properties.project-id"], mixpanel.reducer.numeric_summary(getALift))
     .map(function(project) {
@@ -135,7 +135,7 @@
         from_date: "2016-03-22", // new Date().toISOString().split("T")[0],
     })
     .filter(function(e) {
-      return e.name == "Experiment performance";
+      return e.name == "Experiment performance" " && e.properties["num-users-log10"] > 3;
     })
     .groupBy(["properties.project-id"], mixpanel.reducer.numeric_summary(getALift))
     .map(function(project) {
@@ -159,7 +159,7 @@
         from_date: "2016-03-22", // new Date().toISOString().split("T")[0],
     })
     .filter(function(e) {
-      return e.name == "Experiment performance";
+      return e.name == "Experiment performance" " && e.properties["num-users-log10"] > 3;
     })
     .groupBy(["properties.project-id"], mixpanel.reducer.numeric_summary(getALift))
     .map(function(project) {
