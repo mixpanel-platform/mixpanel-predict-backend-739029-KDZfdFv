@@ -42,19 +42,19 @@
         var scriptD = $('#cqD').html();
         scriptD = $.trim(scriptD);
         
-        MP.api.custom_query(scriptA).done(function(results) {
+        MP.api.jql(scriptA).done(function(results) {
             cqResults.A = structureChartData(results);
         });
 
-        MP.api.custom_query(scriptB).done(function(results) {
+        MP.api.jql(scriptB).done(function(results) {
             cqResults.B = structureChartData(results);
         });
 
-        MP.api.custom_query(scriptC).done(function(results) {
+        MP.api.jql(scriptC).done(function(results) {
             cqResults.C = structureChartData(results);
         });
 
-        MP.api.custom_query(scriptD).done(function(results) {
+        MP.api.jql(scriptD).done(function(results) {
             cqResults.D = structureChartData(results);
             
             // compute the number of intevals (3 hours) since 3/22/16 at 4:30pm PST when metrics started to 1 decimal
